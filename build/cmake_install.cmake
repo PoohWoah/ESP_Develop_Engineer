@@ -1,4 +1,4 @@
-# Install script for directory: C:/Users/82030/Desktop/hello_world
+# Install script for directory: C:/Users/82030/Desktop/XXX
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -39,7 +39,7 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("C:/Users/82030/Desktop/hello_world/build/esp-idf/cmake_install.cmake")
+  include("C:/Users/82030/Desktop/XXX/build/esp-idf/cmake_install.cmake")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT)
@@ -50,5 +50,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "C:/Users/82030/Desktop/hello_world/build/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "C:/Users/82030/Desktop/XXX/build/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

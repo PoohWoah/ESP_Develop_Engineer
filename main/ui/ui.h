@@ -14,10 +14,8 @@ extern "C"
 #include "lvgl.h"
 
 #include "ui_helpers.h"
-#include "ui_events.h"
-#include "rs_manage.h"
 #define LV_IMG_DECLARE_FILE(var_name) extern lv_img_dsc_t var_name;
-
+    
     LV_IMG_DECLARE_FILE(ui_img_CB1);
     LV_IMG_DECLARE_FILE(ui_img_complete);
     LV_IMG_DECLARE_FILE(ui_img_MCU);
@@ -82,6 +80,7 @@ extern "C"
     LV_IMG_DECLARE(up);
     LV_IMG_DECLARE(down);
     LV_IMG_DECLARE(PKQ);
+    LV_IMG_DECLARE(wink_png);
 #ifdef __cplusplus
 } /*extern "C"*/
 #endif

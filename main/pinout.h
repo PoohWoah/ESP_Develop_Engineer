@@ -2,7 +2,7 @@
 #define PINOUT_H
 
 // LCD panel parameter
-#define LCD_PCLK_HZ 23000000
+#define LCD_PCLK_HZ (23 * 1000 * 1000)
 #define LCD_H_RES   800
 #define LCD_HSYNC_PULSE_WIDTH   4
 #define LCD_HSYNC_BACK_PORCH    8

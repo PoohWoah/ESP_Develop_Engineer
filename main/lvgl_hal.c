@@ -4,33 +4,26 @@
 #include "esp_lcd_panel_ops.h"
 #include "esp_lcd_panel_rgb.h"
 #include "esp_psram.h"
-#include "lvgl.h"
-#include "driver/gpio.h"
-#include "pinout.h"
 #include "esp_psram.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
+#include "lvgl.h"
 #include "lv_demos.h"
-static esp_err_t i2c_master_init(void)
-{
-    // i2c_config_t conf = {
-    //     .mode = I2C_MODE_MASTER,
-    //     .sda_io_num = I2C0_SDA_PIN,
-    //     .scl_io_num = I2C0_SCL_PIN,
-    //     .sda_pullup_en = GPIO_PULLUP_ENABLE,
-    //     .scl_pullup_en = GPIO_PULLUP_ENABLE,
-    //     .master = {
-    //         .clk_speed = I2C0_SPEED,
-    //     },
-    // };
-    // esp_err_t ret = i2c_param_config(GT911_I2C, &conf);
-    // if (ret == ESP_OK) {
-    //     ret = i2c_driver_install(GT911_I2C, conf.mode, 0, 0, 0);
-    // }
-    return 1;
-}
+#include "driver/i2c.h"
+#include "driver/gpio.h"
+#include "GT911.h"
+#include "pinout.h"
+#include "esp_lcd_touch_gt911.h"
 
-// GT911 gt911 = GT911(GT911_RST_PIN, GT911_IRQ_PIN, GT911_I2C);
+#define SW_PRINT_LCD 1
+
+#if SW_PRINT_LCD
+#include "esp_log.h"
+static const char *TAG = "LCD:";
+#define PRINT_LCD(fmt, args...) ESP_LOGW(TAG, fmt, ##args)
+#else
+#define PRINT_UTILS(...)
+#endif
 
 // #define CONFIG_EXAMPLE_AVOID_TEAR_EFFECT_WITH_SEM 1
 // #define CONFIG_EXAMPLE_DOUBLE_FB 1
@@ -69,23 +62,7 @@ static void usr_disp_flush(lv_disp_drv_t *disp, const lv_area_t *area, lv_color_
     lv_disp_flush_ready(disp);
 }
 
-void touch_idle_time_clear(void);
-static void usr_touchpad_read(lv_indev_drv_t *indev_driver, lv_indev_data_t *data)
-{
-    // gt911_event_t event = {.number = 0};
-    // if(gt911.ready()) {
-    //     gt911.getTouch(&event);
-    // }
-    // if(event.number) {
-    //     data->state = LV_INDEV_STATE_PR;
-    //     /*Set the coordinates*/
-    //     data->point.x = event.point[0].x;
-    //     data->point.y = event.point[0].y;
-    //     touch_idle_time_clear();
-    // } else {
-    //     data->state = LV_INDEV_STATE_REL;
-    // }
-}
+void usr_touchpad_read(lv_indev_drv_t *indev_driver, lv_indev_data_t *data);
 
 esp_lcd_panel_handle_t rgb_panel_initialization(void)
 {
@@ -103,14 +80,17 @@ esp_lcd_panel_handle_t rgb_panel_initialization(void)
             .vsync_back_porch = LCD_VSYNC_BACK_PORCH,
             .vsync_front_porch = LCD_VSYNC_FRONT_PORCH,
             .flags = {
-                .pclk_active_neg = true,
-            }},
+                .pclk_active_neg = true, // 用来控制 LCD 面板的像素时钟(PCLK)极性的。根据 LCD 面板的数据手册来查看 PCLK 的极性要求
+            },
+        },
         .data_width = 16,
         .num_fbs = EXAMPLE_LCD_NUM_FB,
+#define CONFIG_EXAMPLE_USE_BOUNCE_BUFFER 1
 #if CONFIG_EXAMPLE_USE_BOUNCE_BUFFER
         .bounce_buffer_size_px = 10 * LCD_H_RES,
 #endif
         .psram_trans_align = 64,
+        .bits_per_pixel = 16,
         .hsync_gpio_num = LCD_HSYNC_PIN,
         .vsync_gpio_num = LCD_VSYNC_PIN,
         .de_gpio_num = LCD_DE_PIN,
@@ -134,12 +114,11 @@ esp_lcd_panel_handle_t rgb_panel_initialization(void)
             LCD_R6_PIN,
             LCD_R7_PIN,
         },
-        .flags = {
-            .fb_in_psram = 1,
-            // .double_fb = 1,
-            // .refresh_on_demand = 1,
-        }
-        // .bounce_buffer_size_px = 10 * LCD_H_RES,
+        .flags.fb_in_psram = 1,
+        // .double_fb = 1,
+        // .refresh_on_demand = 1,
+        // allocate frame buffer in PSRAM
+        // .flags.refresh_on_demand = refresh_on_demand,
     };
     esp_lcd_new_rgb_panel(&panel_config, &panel_handle);
     esp_lcd_panel_reset(panel_handle);
@@ -152,9 +131,6 @@ static esp_lcd_panel_handle_t esp_panel;
 
 void lvgl_hal_init(void)
 {
-    // // touch screen
-    // i2c_master_init();
-    // gt911.begin();
 
 #if CONFIG_EXAMPLE_AVOID_TEAR_EFFECT_WITH_SEM
     sem_vsync_end = xSemaphoreCreateBinary();
@@ -185,6 +161,7 @@ void lvgl_hal_init(void)
     gpio_set_level(LCD_BL_PIN, 1);
 
     lv_init();
+
     // must static
     static lv_disp_draw_buf_t draw_buf;
     lv_disp_draw_buf_init(&draw_buf, buf1, buf2, LCD_H_RES * LCD_V_RES);
@@ -200,7 +177,7 @@ void lvgl_hal_init(void)
     disp_drv.draw_buf = &draw_buf;
     disp_drv.user_data = esp_panel; // esp_lcd_rgb_panel_get_frame_buffer(esp_panel);
     lv_disp_drv_register(&disp_drv);
-    // lv_disp_set_rotation(NULL, LV_DISP_ROT_180);
+    //  lv_disp_set_rotation(NULL, LV_DISP_ROT_180);
 #if CONFIG_EXAMPLE_DOUBLE_FB
     disp_drv.full_refresh = true; // the full_refresh mode can maintain the synchronization between the two frame buffers
 #endif
@@ -210,16 +187,7 @@ void lvgl_hal_init(void)
     };
     esp_lcd_rgb_panel_register_event_callbacks(esp_panel, &cbs, &disp_drv);
 
-    /* touch screen */
-    // must static
-    static lv_indev_drv_t indev_drv;
-    lv_indev_drv_init(&indev_drv);
-    // indev_drv.gesture_limit = 30;
-    // indev_drv.gesture_min_velocity = 3;
-    indev_drv.type = LV_INDEV_TYPE_POINTER;
-    indev_drv.read_cb = usr_touchpad_read;
-    lv_indev_drv_register(&indev_drv);
-
+    GT911_init();
     /* set background color to black (default white) */
     // lv_obj_set_style_bg_color(lv_scr_act(), LV_COLOR_MAKE(0x00, 0x00, 0x00), LV_STATE_DEFAULT);
 }

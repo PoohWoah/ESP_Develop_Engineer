@@ -3,13 +3,21 @@
   "files.associations": {
     "lvgl.h": "c",
     "lv_demos.h": "c",
-    "freertos.h": "c"
+    "freertos.h": "c",
+    "regex": "c",
+    "esp_timer.h": "c",
+    "task.h": "c",
+    "i2c.h": "c",
+    "gpio.h": "c",
+    "esp_lcd_touch_gt911.h": "c",
+    "esp_lvgl_port.h": "c",
+    "stdio.h": "c"
   },
   "idf.adapterTargetName": "esp32s3",
   "idf.openOcdConfigs": [
     "board/esp32s3-builtin.cfg"
   ],
-  "idf.portWin": "COM20",
+  "idf.portWin": "COM5",
   "C_Cpp.errorSquiggles": "disabled",
   "idf.flashType": "UART"
 }

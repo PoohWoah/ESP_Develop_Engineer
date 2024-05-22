@@ -1,4 +1,4 @@
-/* * Data converted from C:/Users/82030/Desktop/hello_world/build/esp-idf/mbedtls/x509_crt_bundle
+/* * Data converted from C:/Users/82030/Desktop/XXX/build/esp-idf/mbedtls/x509_crt_bundle
  */
 .data
 .section .rodata.embedded

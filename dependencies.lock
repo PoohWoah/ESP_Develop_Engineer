@@ -1,9 +1,15 @@
 dependencies:
+  espressif__esp_lcd_touch:
+    component_hash: null
+    source:
+      path: C:\Users\82030\Desktop\XXX\components\espressif__esp_lcd_touch
+      type: local
+    version: 1.1.1
   idf:
     component_hash: null
     source:
       type: idf
     version: 5.1.1
-manifest_hash: 9703684dbe5f5e330279c3fd9914f4dca61f91de0add0749534694bb54e2d18f
+manifest_hash: 28a7a8ec4d4b471cb2e188480101fc39a9ac3a6244431fb4091ad197ae4c51d0
 target: esp32s3
 version: 1.0.0
