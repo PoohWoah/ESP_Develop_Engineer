@@ -1,0 +1,18 @@
+usage: esptool write_flash [-h] [--erase-all]
+                           [--flash_freq {keep,80m,60m,48m,40m,30m,26m,24m,20m,16m,15m,12m}]
+                           [--flash_mode {keep,qio,qout,dio,dout}]
+                           [--flash_size {detect,keep,256KB,512KB,1MB,2MB,2MB-c1,4MB,4MB-c1,8MB,16MB,32MB,64MB,128MB}]
+                           [--spi-connection SPI_CONNECTION] [--no-progress]
+                           [--verify] [--encrypt]
+                           [--encrypt-files <address> <filename> [<address> <filename> ...]]
+                           [--ignore-flash-encryption-efuse-setting] [--force]
+                           [--compress | --no-compress]
+                           <address> <filename> [<address> <filename> ...]
+esptool write_flash: error: argument <address> <filename>: Detected overlap at address: 0x71e000 for file: spiffs_data.bin
+CMake Error at run_serial_tool.cmake:66 (message):
+  
+  e:/esp-idf/esp-idf_v5.3.1/tools/python_env/idf5.3_py3.11_env/Scripts/python.exe;;E:/esp-idf/esp-idf_v5.3.1/v5.3.1/esp-idf/components/esptool_py/esptool/esptool.py;--chip;esp32s3
+  failed.
+
+
+

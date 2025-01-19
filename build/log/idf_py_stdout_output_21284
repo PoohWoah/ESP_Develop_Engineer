@@ -1,0 +1,13 @@
+[1/2] cmd.exe /C "cd /D C:\Users\82030\Desktop\volc_rtc\build\esp-idf\partition_table && E:\esp-idf\esp-idf_v5.3.1\tools\tools\cmake\3.24.0\bin\cmake.exe -E echo "Partition table binary generated. Contents:" && E:\esp-idf\esp-idf_v5.3.1\tools\tools\cmake\3.24.0\bin\cmake.exe -E echo ******************************************************************************* && e:\esp-idf\esp-idf_v5.3.1\tools\python_env\idf5.3_py3.11_env\Scripts\python.exe E:/esp-idf/esp-idf_v5.3.1/v5.3.1/esp-idf/components/partition_table/gen_esp32part.py -q --offset 0x8000 --flash-size 16MB -- C:/Users/82030/Desktop/volc_rtc/build/partition_table/partition-table.bin && E:\esp-idf\esp-idf_v5.3.1\tools\tools\cmake\3.24.0\bin\cmake.exe -E echo *******************************************************************************"
+Partition table binary generated. Contents:
+*******************************************************************************
+# ESP-IDF Partition Table
+# Name, Type, SubType, Offset, Size, Flags
+nvs,data,nvs,0x9000,16K,
+phy_init,data,phy,0xd000,4K,
+factory,app,factory,0x10000,3M,
+model,data,spiffs,0x310000,4152K,
+spiffs_data,data,spiffs,0x71e000,64K,
+*******************************************************************************
+[2/2] Warning: command "partition_table" is deprecated. Have you wanted to run "partition-table" instead?
+
